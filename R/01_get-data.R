@@ -221,32 +221,9 @@ state_restrictions <- read_csv(here::here("data-raw", "50 States Overview.csv"))
             by = c("state" = "state_name")) %>% 
   select(-state)
 
-state_restrictions_detailed <- read_csv(here::here("data-raw",
-                                                   "Selected Variables Download.csv"))
-
-
-# Merge and write out -----------------------------------------------------
-
-data <- rents1 %>% 
-  left_join(zillow, by = c("fips", "month")) %>% 
-  left_join(temp_monthly, by = c("fips", "month")) %>% 
-  left_join(covid_monthly, by = c("fips", "month")) %>% 
-  left_join(emp, by = c("fips", "month")) %>% 
-  left_join(pop, by = "fips") %>% 
-  left_join(urban, by = "fips")
-
-# Add back county and state names
-data <- data %>% 
-  left_join(fips %>% 
-              mutate(fips = paste0(state_code, county_code)) %>% 
-              select(fips, state, state_code,
-                     county_name = county), 
-            by = c("fips")) %>% 
-  left_join(state_restrictions, by = "state_code") %>% 
-  select(state, fips, county_name, month, everything(), -state_code)
-  
-# Write out
-write_csv(data,
+write_csv(state_restrictions,
           here::here("data",
-                     "monthly-county-combined-dataset.csv"),
-          na = "")
+                     "state-covid-restrictions.csv"))
+
+
+
