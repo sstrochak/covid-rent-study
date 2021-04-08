@@ -28,6 +28,9 @@ pop <- read_csv(here::here("data",
 urban <- read_csv(here::here("data",
                              "county-urban-rural-classification.csv"))
 
+pmms <- read_csv(here::here("data",
+                            "monthly-pmms.csv"))
+
 state_restrictions <- read_csv(here::here("data",
                                           "state-covid-restrictions.csv"))
 # Merge and write out -----------------------------------------------------
@@ -38,7 +41,8 @@ data <- rents1 %>%
   left_join(covid_monthly, by = c("fips", "month")) %>% 
   left_join(emp, by = c("fips", "month")) %>% 
   left_join(pop, by = "fips") %>% 
-  left_join(urban, by = "fips")
+  left_join(urban, by = "fips") %>% 
+  left_join(pmms, by = "month")
 
 # Add back county and state names
 data <- data %>% 

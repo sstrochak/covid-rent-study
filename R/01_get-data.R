@@ -209,6 +209,21 @@ write_csv(emp,
 
 
 
+
+# Mortgage rates ----------------------------------------------------------
+
+pmms <- read_csv("http://www.freddiemac.com/pmms/docs/PMMS_history.csv") %>% 
+  select(date, pmms30) %>% 
+  mutate(date = mdy(date)) %>% 
+  mutate(month = ymd(paste0(year(date), "-", month(date), "-01"))) %>% 
+  group_by(month) %>% 
+  summarize(pmms = mean(pmms30)) %>% 
+  filter(month >= "2018-01-01")
+
+
+write_csv(pmms, here::here("data", 
+                           "monthly-pmms.csv"))
+
 # COVID restrictions ------------------------------------------------------
 
 state_restrictions <- read_csv(here::here("data-raw", "50 States Overview.csv")) %>% 
