@@ -104,8 +104,9 @@ read_county_temperature <- function(date,
 
 }
 
+
 date_range <- c(paste0(2020, str_pad(1:12, width = 2, side = "left", pad = "0")),
-                paste0(2021, str_pad(2, width = 2, side = "left", pad = "0")))
+                paste0(2021, str_pad(1:3, width = 2, side = "left", pad = "0")))
 
 combos <- expand.grid(date_range,
                       c("avg", "min", "max"))

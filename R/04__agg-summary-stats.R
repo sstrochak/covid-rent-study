@@ -1,11 +1,8 @@
 
-
 library(tidyverse)
-
 
 data <- read_csv(here::here("data",
                             "monthly-county-combined-dataset.csv"))
-
 
 
 nat_over_time <- data %>% 
