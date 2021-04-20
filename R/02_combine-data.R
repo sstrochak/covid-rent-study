@@ -60,3 +60,4 @@ write_csv(data,
           here::here("data",
                      "monthly-county-combined-dataset.csv"),
           na = "")
+
