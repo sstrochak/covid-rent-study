@@ -38,9 +38,6 @@ pit <- data %>%
 
 # model -------------------------------------------------------------------
 
-count(pit, rural_classifiction)
-
-
 m1 <- lm(rent_change ~ cases_per_capita +
            deaths_per_capita +
            jan_temp +
@@ -63,6 +60,8 @@ modelsummary(list("Rent change" = m1,
 
 
 modelplot(list("Rent change" = m1,
-               "Home price change" = m2))
+               "Home price change" = m2),
+          vcov = "HC1")
+
 ggsave(here::here("figures",
                   "time-invariant-model-plot.png"))
