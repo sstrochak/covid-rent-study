@@ -1,12 +1,29 @@
+---
+title: "Time invariant model"
+output: 
+  html_document:
+    toc: TRUE
+    toc_float: TRUE
+    code_folding: hide
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
 
 library(tidyverse)
+library(plm)
+library(lmtest)
+library(clubSandwich)
 library(modelsummary)
+
+options(scipen = 999)
 
 data <- read_csv(here::here("data",
                             "monthly-county-combined-dataset.csv"))
 
-
-# create summarized dataset  ----------------------------------------------
 
 
 pit <- data %>% 
@@ -30,26 +47,34 @@ pit <- data %>%
             rent_change = (rent_now - rent_then) / rent_then,
             homeprice_change = (homeprice_now - homeprice_then) / homeprice_then,
             unemployment_rate_change = unemployment_rate[month == "2020-02-01"] -
-              unemployment_rate[month == "2021-02-01"]) %>% 
-  ungroup()
+              unemployment_rate[month == "2021-02-01"],
+            rent_change_dollar = rent_now - rent_then,
+            homeprice_change_dollar = homeprice_now - homeprice_then) %>% 
+  ungroup() %>% 
+  mutate(republican_governor = ifelse(governor_party == "Republican",
+                                      1,
+                                      0))
 
+```
 
+```{r, message=FALSE}
 
-
-# model -------------------------------------------------------------------
-
-m1 <- lm(rent_change ~ cases_per_capita +
-           deaths_per_capita +
+m1 <- lm(rent_change_dollar ~ cases_per_capita +
+           rent_then +
            jan_temp +
            population_per_sqmile + 
-           unemployment_rate_change,
+           unemployment_rate_change +
+           republican_governor +
+           total_executive_orders,
          data = pit)
 
-m2 <- lm(homeprice_change ~ cases_per_capita +
-           deaths_per_capita +
+m2 <- lm(homeprice_change_dollar ~ cases_per_capita +
+           homeprice_then +
            jan_temp +
            population_per_sqmile + 
-           unemployment_rate_change,
+           unemployment_rate_change +
+           republican_governor +
+           total_executive_orders,
          data = pit)
 
 modelsummary(list("Rent change" = m1,
@@ -61,7 +86,15 @@ modelsummary(list("Rent change" = m1,
 
 modelplot(list("Rent change" = m1,
                "Home price change" = m2),
-          vcov = "HC1")
+          vcov = "HC1",
+          coef_omit = "(Intercept)")
+
+
+modelplot(m1,
+          vcov = "HC1",
+          coef_omit = "(Intercept)")
 
 ggsave(here::here("figures",
                   "time-invariant-model-plot.png"))
+
+```

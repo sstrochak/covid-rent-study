@@ -11,7 +11,7 @@ data <- read_csv(here::here("data",
 data_rent <- data %>% 
   select(fips, county_name, month,
          starts_with("rent"),
-         starts_with("zhvi")) 
+         starts_with("zhvi"))
 
 
 
@@ -36,12 +36,21 @@ plot_rent_v_homeprice <- function(my_fips) {
          aes(x = month, y = index, 
              group = tenure, color = tenure)) +
     geom_line() +
-    labs(x = "Month", y = "Index", 
-         color = NULL,
-         title = paste0("Rent and home price changes in ", name))
+    labs(x = NULL, y = NULL, 
+         color = NULL) +
+    scale_color_manual(values = c("#00799e", "#ffa604")) +
+    theme_minimal() +
+    theme(legend.position = "top") +
+    scale_x_date(date_breaks = "6 months",
+                 date_labels = "%b-%y") +
+    geom_vline(xintercept = ymd("2020-03-01"),
+               linetype = "dashed",
+               color = "darkgrey")
   
   ggsave(here::here("figures",
-                    paste0("Rent and home price changes in ", name, ".png")))
+                    paste0("Rent and home price changes in ", name, ".png")),
+         height = 4,
+         width = 4)
   
   print(p)
   

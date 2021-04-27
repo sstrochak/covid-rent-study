@@ -1,0 +1,131 @@
+---
+title: ""
+output: 
+  html_document:
+    toc: TRUE
+    toc_float: TRUE
+    code_folding: hide
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+
+library(tidyverse)
+library(lubridate)
+library(plm)
+library(lmtest)
+library(clubSandwich)
+library(modelsummary)
+
+options(scipen = 999)
+
+data <- read_csv(here::here("data",
+                            "monthly-county-combined-dataset.csv"))
+
+
+
+data <- data %>% 
+  filter(month >= "2020-01-01",
+         month < "2021-03-01") %>% 
+  mutate(across(c(cases, deaths),
+                ~ ifelse(is.na(.),
+                         0,
+                         .))) %>% 
+  mutate(cases_per_capita = cases / population,
+         deaths_per_capita = deaths / population) %>% 
+  filter(!is.na(fips))
+
+
+```
+
+## 6-month rolling panel model
+
+```{r}
+
+panel_model_6mo <- function(dataframe,
+                            start_date) {
+  
+  
+  mdata <- dataframe %>% 
+    filter(month >= start_date,
+           month < ymd(start_date) + days(30 * 6))
+  
+  
+  mod_it_rent <- plm(rent_index ~ cases_per_capita + deaths_per_capita 
+                     + avg_temp + unemployment_rate,
+                     data = mdata,
+                     index = c("fips", "month"),
+                     model = "within",
+                     effect = "twoways") %>% 
+    broom::tidy() %>% 
+    mutate(model_type = "Rent index",
+           start_date = start_date)
+  
+  mod_it_own <- plm(zhvi_index ~ cases_per_capita + deaths_per_capita 
+                    + avg_temp + unemployment_rate,
+                    data = mdata,
+                    index = c("fips", "month"),
+                    model = "within",
+                    effect = "twoways") %>% 
+    broom::tidy() %>% 
+    mutate(model_type = "Home price index",
+           start_date = start_date)
+  
+  bind_rows(mod_it_rent,
+            mod_it_own)
+}
+
+
+results <- map_df(.x = ymd("2020-01-01") + months(0:8),
+                  ~ panel_model_6mo(dataframe = data,
+                                    start_date = .x))
+
+
+rolling_coef_plot <- function(results_df,
+                              variable) {
+  
+  
+  results %>% 
+    filter(term == variable) %>% 
+    ggplot(aes(x = start_date, y = estimate, color = model_type)) +
+    geom_point(position = position_dodge(width = 5)) +
+    geom_errorbar(aes(ymin = estimate - 1.96*std.error,
+                      ymax = estimate + 1.96*std.error),
+                  position = position_dodge(width= 5)) +
+    theme_minimal() +
+    scale_x_date(date_breaks = "1 month",
+                 date_labels = "%b-%y") +
+    labs(x = "Start date of 6-month period",
+         y = NULL,
+         color = NULL) +
+    theme(legend.position = "top") +
+    scale_color_manual(values = c("#00799e", "#ffa604"))
+  
+}
+
+```
+
+### Cases per capita
+
+```{r}
+rolling_coef_plot(results_df = results,
+                  variable = "cases_per_capita")
+```
+
+### Average monthly temperature
+
+```{r}
+rolling_coef_plot(results_df = results,
+                  variable = "avg_temp")
+```
+
+### Unemployment rate
+
+```{r}
+rolling_coef_plot(results_df = results,
+                  variable = "unemployment_rate")
+
+```
