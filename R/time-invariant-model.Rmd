@@ -44,8 +44,8 @@ pit <- data %>%
             homeprice_now = zhvi[month == "2021-02-01"],
             homeprice_then = zhvi[month == "2020-02-01"],
             pmms_change = pmms[month == "2020-03-01"] - pmms[month == "2020-02-01"],
-            rent_change = (rent_now - rent_then) / rent_then,
-            homeprice_change = (homeprice_now - homeprice_then) / homeprice_then,
+            rent_change = (rent_now - rent_then) / rent_then * 100,
+            homeprice_change = (homeprice_now - homeprice_then) / homeprice_then * 100,
             unemployment_rate_change = unemployment_rate[month == "2020-02-01"] -
               unemployment_rate[month == "2021-02-01"],
             rent_change_dollar = rent_now - rent_then,
@@ -57,10 +57,48 @@ pit <- data %>%
 
 ```
 
+```{r}
+
+pit <- pit %>% 
+  mutate(rent_change_abs = abs(rent_change_dollar),
+         rent_decrease = ifelse(rent_change_dollar < 0,
+                                1,
+                                0),
+         homeprice_change_abs = abs(homeprice_change_dollar),
+         homeprice_decrease = ifelse(homeprice_change_dollar < 0,
+                                     1,
+                                     0))
+
+# summarize(pit,
+#           rent_decrease = sum(rent_decrease, na.rm = TRUE),
+#           homeprice_decrease = sum(homeprice_decrease, na.rm = TRUE))
+# 
+# pit %>% 
+#   filter(rent_decrease == 1) %>% 
+#   summarize(mean(rent_change))
+# 
+# pit %>% 
+#   summarize(mean(homeprice_change,
+#                  na.rm = TRUE))
+
+```
+
 ```{r, message=FALSE}
 
-m1 <- lm(rent_change_dollar ~ cases_per_capita +
+
+pit <- pit %>% 
+  mutate(rent_change_abs = abs(rent_change_dollar),
+         rent_increase = ifelse(rent_change_dollar < 0,
+                                0,
+                                1),
+         homeprice_change_abs = abs(homeprice_change_dollar),
+         homeprice_increase = ifelse(homeprice_change_dollar < 0,
+                                     0,
+                                     1))
+
+m1 <- lm(rent_change ~ cases_per_capita +
            rent_then +
+           #rent_decrease +
            jan_temp +
            population_per_sqmile + 
            unemployment_rate_change +
@@ -68,8 +106,9 @@ m1 <- lm(rent_change_dollar ~ cases_per_capita +
            total_executive_orders,
          data = pit)
 
-m2 <- lm(homeprice_change_dollar ~ cases_per_capita +
+m2 <- lm(homeprice_change ~ cases_per_capita +
            homeprice_then +
+           #homeprice_decrease +
            jan_temp +
            population_per_sqmile + 
            unemployment_rate_change +
@@ -87,14 +126,32 @@ modelsummary(list("Rent change" = m1,
 modelplot(list("Rent change" = m1,
                "Home price change" = m2),
           vcov = "HC1",
-          coef_omit = "(Intercept)")
-
-
-modelplot(m1,
-          vcov = "HC1",
-          coef_omit = "(Intercept)")
+          coef_omit = "(Intercept)|republican_governor",
+          coef_rename = c("cases_per_capita" ="Cases per capita",
+                          "rent_then" = "Rent, pre-pandemic",
+                          "jan_temp" ="January average temperature",
+                          "population_per_sqmile" ="Population per square mile",
+                          "unemployment_rate_change" = "Unemployment rate change",
+                          "total_executive_orders" = "Total executive orders",
+                          "homeprice_then" = "Home prices, pre-pandemic")) +
+  scale_color_manual(values = c("#00799e", "#ffa604"))
 
 ggsave(here::here("figures",
                   "time-invariant-model-plot.png"))
+
+modelplot(m1,
+          vcov = "HC1",
+          coef_omit = "(Intercept)|republican_governor",
+          coef_rename = c("cases_per_capita" ="Cases per capita",
+                          "rent_then" = "Rent, pre-pandemic",
+                          "jan_temp" ="January average temperature",
+                          "population_per_sqmile" ="Population per square mile",
+                          "unemployment_rate_change" = "Unemployment rate change",
+                          "total_executive_orders" = "Total executive orders",
+                          "homeprice_then" = "Home prices, pre-pandemic"))
+
+ggsave(here::here("figures",
+                  "time-invariant-model-plot.png"),
+       width = 6, height = 6)
 
 ```

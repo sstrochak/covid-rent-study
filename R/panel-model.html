@@ -1927,9 +1927,32 @@ Classical
 ## alternative hypothesis: significant effects</code></pre>
 </div>
 </div>
+<div id="ti-effects-vs.-time" class="section level3 tabset tabset.fade">
+<h3 class="tabset tabset.fade">T+I effects vs. time</h3>
+<div id="rent-4" class="section level4">
+<h4>Rent</h4>
+<pre class="r"><code>pFtest(mod_it_rent, mod_time_rent)</code></pre>
+<pre><code>## 
+##  F test for twoways effects
+## 
+## data:  rent_index ~ cases_per_capita + deaths_per_capita + avg_temp +  ...
+## F = 18.17, df1 = 354, df2 = 4598, p-value &lt; 0.00000000000000022
+## alternative hypothesis: significant effects</code></pre>
+</div>
+<div id="own-1" class="section level4">
+<h4>Own</h4>
+<pre class="r"><code>pFtest(mod_it_own, mod_time_own)</code></pre>
+<pre><code>## 
+##  F test for twoways effects
+## 
+## data:  zhvi_index ~ cases_per_capita + deaths_per_capita + avg_temp +  ...
+## F = 19.433, df1 = 354, df2 = 4598, p-value &lt; 0.00000000000000022
+## alternative hypothesis: significant effects</code></pre>
+</div>
+</div>
 <div id="random-vs-pooled" class="section level3 tabset tabset.fade">
 <h3 class="tabset tabset.fade">Random vs pooled</h3>
-<div id="rent-4" class="section level4">
+<div id="rent-5" class="section level4">
 <h4>Rent</h4>
 <pre class="r"><code>mod_pool_rent2 &lt;- plm(rent_index ~ cases_per_capita + deaths_per_capita 
                     + avg_temp + unemployment_rate,
@@ -1964,7 +1987,7 @@ plmtest(mod_pool_own2, type = &quot;bp&quot;)</code></pre>
 </div>
 <div id="random-vs-individual" class="section level3 tabset tabset.fade">
 <h3 class="tabset tabset.fade">Random vs individual</h3>
-<div id="rent-5" class="section level4">
+<div id="rent-6" class="section level4">
 <h4>Rent</h4>
 <pre class="r"><code>phtest(mod_ind_rent, mod_rand_rent)</code></pre>
 <pre><code>## 
@@ -1987,7 +2010,7 @@ plmtest(mod_pool_own2, type = &quot;bp&quot;)</code></pre>
 </div>
 <div id="random-vs.-ti" class="section level3 tabset tabset.fade">
 <h3 class="tabset tabset.fade">Random vs. T+I</h3>
-<div id="rent-6" class="section level4">
+<div id="rent-7" class="section level4">
 <h4>Rent</h4>
 <pre class="r"><code>phtest(mod_it_rent, mod_rand_rent)</code></pre>
 <pre><code>## 

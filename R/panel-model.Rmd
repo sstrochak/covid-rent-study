@@ -291,6 +291,26 @@ pFtest(mod_it_own, mod_ind_own)
 
 ```
 
+### T+I effects vs. time {.tabset .tabset.fade}
+
+#### Rent
+
+```{r}
+
+pFtest(mod_it_rent, mod_time_rent)
+
+```
+
+#### Own
+
+```{r}
+
+pFtest(mod_it_own, mod_time_own)
+
+```
+
+
+
 ### Random vs pooled {.tabset .tabset.fade}
 
 #### Rent
