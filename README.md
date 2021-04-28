@@ -20,11 +20,12 @@ All programs are found in the `R` folder.
 
 ## Results
 
-The results of our estimation can be found on this website. Click on the "code" buttons to see the code chunk that generated a specific set of results.
+The results of our estimation can be found at the links below. Click on the "code" buttons to see the code chunk that generated a specific set of results.
 
-1. Time invariant model
+1. [Time invariant model](https://sstrochak.github.io/covid-rent-study/R/time-invariant-model.html)
 
-2. Panel model
+2. [Panel model](https://sstrochak.github.io/covid-rent-study/R/panel-model.html)
 
-3. Rolling panel model
+3. [Rolling panel model](https://sstrochak.github.io/covid-rent-study/R/rolling-model.html)
 
+4. [Robustness checks](https://sstrochak.github.io/covid-rent-study/R/robustness-checks.html)
