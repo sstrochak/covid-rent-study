@@ -41,7 +41,7 @@ data <- data %>%
 
 ```
 
-## 6-month rolling panel model
+## Robustness check: Rolling Panel
 
 ```{r}
 
@@ -85,6 +85,16 @@ results <- map_df(.x = ymd("2020-01-01") + months(0:8),
                                     start_date = .x,
                                     n_months = 6))
 
+results4 <- map_df(.x = ymd("2020-01-01") + months(0:10),
+                  ~ panel_model_6mo(dataframe = data,
+                                    start_date = .x,
+                                    n_months = 4))
+
+results8 <- map_df(.x = ymd("2020-01-01") + months(0:6),
+                  ~ panel_model_6mo(dataframe = data,
+                                    start_date = .x,
+                                    n_months = 8))
+
 rolling_coef_plot <- function(results_df,
                               variable,
                               n_months = 6) {
@@ -111,24 +121,85 @@ rolling_coef_plot <- function(results_df,
 
 ```
 
-### Cases per capita
+### Cases per capita {.tabset .tabset-fade}
+
+#### 4-month
 
 ```{r}
-rolling_coef_plot(results_df = results,
-                  variable = "cases_per_capita")
+rolling_coef_plot(results_df = results4,
+                  variable = "cases_per_capita",
+                  n_months = 4)
 ```
 
-### Average monthly temperature
+#### 6-month
 
 ```{r}
 rolling_coef_plot(results_df = results,
-                  variable = "avg_temp")
+                  variable = "cases_per_capita",
+                  n_months = 6)
 ```
 
-### Unemployment rate
+#### 8-month
+
+```{r}
+rolling_coef_plot(results_df = results8,
+                  variable = "cases_per_capita",
+                  n_months = 8)
+```
+
+### Average monthly temperature {.tabset .tabset-fade}
+
+#### 4-month
+
+```{r}
+rolling_coef_plot(results_df = results4,
+                  variable = "avg_temp",
+                  n_months = 4)
+```
+
+
+#### 6-month
 
 ```{r}
 rolling_coef_plot(results_df = results,
-                  variable = "unemployment_rate")
+                  variable = "avg_temp",
+                  n_months = 6)
+```
+
+#### 8-month
+
+```{r}
+rolling_coef_plot(results_df = results8,
+                  variable = "avg_temp",
+                  n_months = 8)
+```
+
+### Unemployment rate {.tabset .tabset.fade}
+
+#### 4-month
+
+```{r}
+rolling_coef_plot(results_df = results4,
+                  variable = "unemployment_rate",
+                  n_months = 4)
+
+```
+
+#### 6-month
+
+```{r}
+rolling_coef_plot(results_df = results,
+                  variable = "unemployment_rate",
+                  n_months = 6)
+
+```
+
+
+#### 8-month
+
+```{r}
+rolling_coef_plot(results_df = results8,
+                  variable = "unemployment_rate",
+                  n_months = 8)
 
 ```

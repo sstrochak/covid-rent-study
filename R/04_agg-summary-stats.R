@@ -18,7 +18,6 @@ nat_over_time <- data %>%
          month <= "2020-12-01")
 
 
-
 nat_over_time %>% 
   gather(key = "metric", value = "value", -month) %>% 
   ggplot(aes(x = month, y = value)) +
@@ -33,9 +32,15 @@ ggsave(here::here("figures",
 
 
 all_stats <- data %>% 
-  filter(month > "2020-01-01",
-         month <= "2020-12-01") %>% 
-  select(`Rent index` = rent,
+  filter(month >= "2020-01-01",
+         month <= "2021-02-01") %>% 
+  mutate(cases = ifelse(is.na(cases),
+                              0,
+                              cases),
+         deaths = ifelse(is.na(deaths),
+                         0,
+                         deaths)) %>% 
+  select(`Rent index` = rent_index,
          `Home price index` = zhvi_index,
          `Average temperature` = avg_temp,
          `COVID cases` = cases,
@@ -48,3 +53,4 @@ all_stats <- data %>%
   ungroup()
 
 modelsummary::datasummary_skim(all_stats)
+

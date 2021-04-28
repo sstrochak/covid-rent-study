@@ -131,7 +131,6 @@ mod_it_own <- plm(zhvi_index ~ cases_per_capita + deaths_per_capita
                   model = "within",
                   effect = "twoways")
 
-
 modelsummary(list("Rent index" = mod_it_rent, 
                   "Home price index" = mod_it_own),
              stars = TRUE)
