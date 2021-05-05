@@ -136,6 +136,17 @@ modelsummary(list("Rent index" = mod_it_rent,
              stars = TRUE)
 
 
+modelplot(list("Rent index" = mod_it_rent, 
+                  "Home price index" = mod_it_own),
+          coef_omit = "deaths_per_capita",
+          coef_rename = c("cases_per_capita" ="Cases per capita",
+                          "avg_temp" = "Average temperture",
+                          "unemployment_rate" = "Unemployment rate")) +
+  scale_color_manual(values = c("#00799e", "#ffa604"))
+
+ggsave(here::here("figures",
+                  "it-coefficient-plot.png"))
+
 ```
 
 ### Random effects
