@@ -56,7 +56,7 @@ mod_pool_own <-lm(zhvi_index ~ cases_per_capita + deaths_per_capita
                   data = data)
 
 modelsummary(list("Rent index" = mod_pool_rent, 
-                  "Home price indec" = mod_pool_own),
+                  "Home price index" = mod_pool_own),
              stars = TRUE,
              vcov = ~fips)
 
@@ -185,7 +185,7 @@ modelsummary(list("Pooled" = mod_pool_rent,
                   "Time effects" = mod_time_rent,
                   "County and time fixed effects" = mod_it_rent,
                   "Random effects" = mod_rand_rent),
-             vcov = c(~cyl, rep("classical", 4)),
+             vcov = c(~fips, rep("classical", 4)),
              stars = TRUE,
              coef_omit = "month",
              gof_omit = "AIC|BIC|Log.Lik")
@@ -196,7 +196,7 @@ modelplot(list("Pooled" = mod_pool_rent,
                   "Time effects" = mod_time_rent,
                   "County and time fixed effects" = mod_it_rent,
                   "Random effects" = mod_rand_rent),
-             vcov = c(~cyl, rep("classical", 4)),
+             vcov = c(~fips, rep("classical", 4)),
           coef_omit = "month|(Intercept)|deaths_per_capita")
 ```
 
@@ -209,7 +209,7 @@ modelsummary(list("Pooled" = mod_pool_own,
                   "Time effects" = mod_time_own,
                   "County and time fixed effects" = mod_it_own,
                   "Random effects" = mod_rand_own),
-             vcov = c(~cyl, rep("classical", 4)),
+             vcov = c(~fips, rep("classical", 4)),
              stars = TRUE,
              coef_omit = "month",
              gof_omit = "AIC|BIC|Log.Lik")
@@ -220,7 +220,7 @@ modelplot(list("Pooled" = mod_pool_own,
                   "Time effects" = mod_time_own,
                   "County and time fixed effects" = mod_it_own,
                   "Random effects" = mod_rand_own),
-             vcov = c(~cyl, rep("classical", 4)),
+             vcov = c(~fips, rep("classical", 4)),
           coef_omit = "month|(Intercept)|deaths_per_capita")
 
 ```

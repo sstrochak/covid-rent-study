@@ -49,8 +49,7 @@ all_stats <- data %>%
          `Unemployment rate` = unemployment_rate,
          Population = population,
          `Population density` = population_per_sqmile,
-         `Rural classification` = rural_classification,
-         `Mortgage rate` = pmms) %>% 
+         `Rural classification` = rural_classification) %>% 
   ungroup()
 
 modelsummary::datasummary_skim(all_stats)

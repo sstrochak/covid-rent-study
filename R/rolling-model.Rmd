@@ -132,3 +132,33 @@ rolling_coef_plot(results_df = results,
                   variable = "unemployment_rate")
 
 ```
+
+
+#### Combined table
+
+```{r}
+
+results %>% 
+  filter(model_type == "Rent index") %>% 
+  select(start_date,
+         term,
+         estimate,
+         std.error,
+         statistic,
+         p.value) %>% 
+  write_csv(here::here("figures",
+                       "rent-model-rolling.csv"))
+
+
+results %>% 
+  filter(model_type == "Home price index") %>% 
+  select(start_date,
+         term,
+         estimate,
+         std.error,
+         statistic,
+         p.value) %>% 
+  write_csv(here::here("figures",
+                       "homeprice-model-rolling.csv"))
+
+```
