@@ -63,7 +63,8 @@ panel_model_6mo <- function(dataframe,
                      effect = "twoways") %>% 
     broom::tidy() %>% 
     mutate(model_type = "Rent index",
-           start_date = start_date)
+           start_date = start_date,
+           months = paste0(n_months, " month rolling window"))
   
   mod_it_own <- plm(zhvi_index ~ cases_per_capita + deaths_per_capita 
                     + avg_temp + unemployment_rate,
@@ -73,7 +74,8 @@ panel_model_6mo <- function(dataframe,
                     effect = "twoways") %>% 
     broom::tidy() %>% 
     mutate(model_type = "Home price index",
-           start_date = start_date)
+           start_date = start_date,
+           months = paste0(n_months, " month rolling window"))
   
   bind_rows(mod_it_rent,
             mod_it_own)
@@ -120,6 +122,7 @@ rolling_coef_plot <- function(results_df,
 }
 
 ```
+
 
 ### Cases per capita {.tabset .tabset-fade}
 
@@ -201,5 +204,56 @@ rolling_coef_plot(results_df = results,
 rolling_coef_plot(results_df = results8,
                   variable = "unemployment_rate",
                   n_months = 8)
+
+```
+
+
+## Faceted charts for report
+
+```{r}
+rolling_coef_plot_facet <- function(results_df,
+                              variable) {
+  
+  
+  results_df %>% 
+    filter(term == variable) %>% 
+    ggplot(aes(x = start_date, y = estimate, color = model_type)) +
+    geom_hline(yintercept = 0) +
+    geom_point(position = position_dodge(width = 5)) +
+    geom_errorbar(aes(ymin = estimate - 1.96*std.error,
+                      ymax = estimate + 1.96*std.error),
+                  position = position_dodge(width= 5)) +
+    theme_minimal() +
+    scale_x_date(date_breaks = "2 months",
+                 date_labels = "%b-%y") +
+    labs(x = str_glue("Start date of period"),
+         y = NULL,
+         color = NULL) +
+    theme(legend.position = "top") +
+    scale_color_manual(values = c("#00799e", "#ffa604")) +
+    facet_wrap(~months)
+  
+}
+
+
+r <- bind_rows(results, results4, results8)
+
+rolling_coef_plot_facet(results_df = r,
+                  variable = "cases_per_capita") 
+ggsave(here::here("figures",
+                  "cases-window-comp.png"),
+                  width = 7.5, height = 5)
+
+rolling_coef_plot_facet(results_df = r,
+                  variable = "avg_temp") 
+ggsave(here::here("figures",
+                  "temp-window-comp.png"),
+                  width = 7.5, height = 5)
+
+rolling_coef_plot_facet(results_df = r,
+                  variable = "unemployment_rate") 
+ggsave(here::here("figures",
+                  "unemployment-window-comp.png"),
+                  width = 7.5, height = 5)
 
 ```

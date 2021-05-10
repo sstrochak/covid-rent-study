@@ -12,10 +12,9 @@ nat_over_time <- data %>%
             `Average temperatue` = mean(avg_temp, na.rm = TRUE),
             `COVID cases` = mean(cases, na.rm = TRUE),
             `COVID deaths` = mean(deaths, na.rm = TRUE),
-            `Unemployment rate` = mean(unemployment_rate, na.rm = TRUE),
-            `Mortgage rate` = mean(pmms, na.rm = TRUE)) %>% 
-  filter(month > "2020-01-01",
-         month <= "2020-12-01")
+            `Unemployment rate` = mean(unemployment_rate, na.rm = TRUE)) %>% 
+  filter(month >= "2020-01-01",
+         month <= "2021-02-01")
 
 
 nat_over_time %>% 
@@ -24,6 +23,8 @@ nat_over_time %>%
     geom_line() +
     facet_wrap(~metric, scales = "free") +
   theme_minimal() +
+  scale_x_date(date_breaks = "3 months",
+               date_labels = "%b-%y") +
   labs(x = NULL, y = NULL)
 
 ggsave(here::here("figures",
